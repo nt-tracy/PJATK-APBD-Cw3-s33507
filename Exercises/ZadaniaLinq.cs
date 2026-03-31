@@ -225,7 +225,11 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie13_GrupowanieZapisowWedlugPrzedmiotu()
     {
-        throw Niezaimplementowano(nameof(Zadanie13_GrupowanieZapisowWedlugPrzedmiotu));
+        return DaneUczelni.Przedmioty.GroupJoin(
+            DaneUczelni.Zapisy,
+            p => p.Id,
+            z => z.PrzedmiotId,
+            (p, z) => $"{p.Nazwa}, {z.Count()}");
     }
 
     /// <summary>
@@ -242,7 +246,18 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie14_SredniaOcenaNaPrzedmiot()
     {
-        throw Niezaimplementowano(nameof(Zadanie14_SredniaOcenaNaPrzedmiot));
+        return DaneUczelni.Przedmioty.GroupJoin(
+            DaneUczelni.Zapisy,
+            p => p.Id,
+            z => z.PrzedmiotId,
+            (p, z) =>
+            {
+                var grades = z.Where(z => z.OcenaKoncowa != null);
+                var average = grades.Average(grade => grade.OcenaKoncowa);
+
+                return $"{p.Nazwa}, {average}";
+            }
+        );
     }
 
     /// <summary>
@@ -258,7 +273,16 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie15_ProwadzacyILiczbaPrzedmiotow()
     {
-        throw Niezaimplementowano(nameof(Zadanie15_ProwadzacyILiczbaPrzedmiotow));
+        return DaneUczelni.Prowadzacy.GroupJoin(
+            DaneUczelni.Przedmioty,
+            prowadzacy => prowadzacy.Id,
+            przedmiot => przedmiot.ProwadzacyId,
+            (prowadzacy, przedmiot) =>
+            {
+                var count = przedmiot.Count();
+                return $"{prowadzacy.Imie}, {prowadzacy.Nazwisko}, {count}";
+            }
+        );
     }
 
     /// <summary>
@@ -275,7 +299,18 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie16_NajwyzszaOcenaKazdegoStudenta()
     {
-        throw Niezaimplementowano(nameof(Zadanie16_NajwyzszaOcenaKazdegoStudenta));
+        return DaneUczelni.Studenci.GroupJoin(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s, oceny = z.Where(z => z.OcenaKoncowa != null) }
+            )
+            .Where(tmp => tmp.oceny.Any())
+            .Select(tmp =>
+            {
+                var max = tmp.oceny.Max(z => z.OcenaKoncowa);
+                return $"{tmp.s.Imie}, {tmp.s.Nazwisko}, {max} ";
+            });
     }
 
     /// <summary>
