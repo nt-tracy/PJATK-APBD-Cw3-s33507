@@ -143,7 +143,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie09_TrzyNajnowszeZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie09_TrzyNajnowszeZapisy));
+        return DaneUczelni.Zapisy.OrderByDescending(e => e.DataZapisu).Take(3)
+            .Select(e => $"{e.DataZapisu}, {e.StudentId}, {e.PrzedmiotId}");
     }
 
     /// <summary>
@@ -159,7 +160,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie10_DrugaStronaPrzedmiotow()
     {
-        throw Niezaimplementowano(nameof(Zadanie10_DrugaStronaPrzedmiotow));
+        
+        return DaneUczelni.Przedmioty
+            .OrderBy(e => e.Nazwa)
+            .Skip(2)
+            .Take(2)
+            .Select(e => $"{e.Nazwa}, {e.Kategoria}");
     }
 
     /// <summary>
@@ -174,7 +180,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie11_PolaczStudentowIZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie11_PolaczStudentowIZapisy));
+        return DaneUczelni.Studenci.Join(
+            DaneUczelni.Zapisy, 
+            s => s.Id, 
+            z => z.StudentId,
+            (student, zapis) => $"{student.Imie}, {student.Nazwisko}, {zapis.DataZapisu}");
+
     }
 
     /// <summary>
@@ -190,7 +201,16 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie12_ParyStudentPrzedmiot()
     {
-        throw Niezaimplementowano(nameof(Zadanie12_ParyStudentPrzedmiot));
+        return DaneUczelni.Zapisy
+            .Join(DaneUczelni.Studenci,
+                z => z.StudentId,
+                s => s.Id,
+                (z, s) => new { z.PrzedmiotId, s.Imie, s.Nazwisko })
+            .Join(DaneUczelni.Przedmioty,
+                tmp => tmp.PrzedmiotId,
+                p => p.Id,
+                (tmp, p) => $"{tmp.Imie}, {tmp.Nazwisko}, {p.Nazwa}"
+            );
     }
 
     /// <summary>
