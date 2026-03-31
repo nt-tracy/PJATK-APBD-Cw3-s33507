@@ -95,7 +95,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie06_CzyWszyscyProwadzacyMajaKatedre()
     {
-        throw Niezaimplementowano(nameof(Zadanie06_CzyWszyscyProwadzacyMajaKatedre));
+        var count = DaneUczelni.Prowadzacy.Count(e => e.Katedra != null);
+        var countAll = DaneUczelni.Prowadzacy.Count();
+
+        return [(countAll == count) ? "true" : "false" ];
+
+
     }
 
     /// <summary>
@@ -109,7 +114,7 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie07_LiczbaAktywnychZapisow()
     {
-        throw Niezaimplementowano(nameof(Zadanie07_LiczbaAktywnychZapisow));
+        return [$"{DaneUczelni.Zapisy.Count(e => e.CzyAktywny)}"];
     }
 
     /// <summary>
@@ -123,7 +128,7 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie08_UnikalneMiastaStudentow()
     {
-        throw Niezaimplementowano(nameof(Zadanie08_UnikalneMiastaStudentow));
+            return DaneUczelni.Studenci.Select(e => e.Miasto).Distinct();
     }
 
     /// <summary>
